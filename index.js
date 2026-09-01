@@ -1,10 +1,24 @@
 import fs from "fs";
 
-fs.readFile("tasks.json", "utf8", (err, data) => {
-  if (err) {
-    console.error(err);
-    return;
-  }
+class Task {
+  title;
+  id;
 
-  console.log(JSON.parse(data));
-});
+  constructor(title, id) {
+    this.title = title;
+    this.id = id;
+  }
+}
+
+async function addTask() {
+  let data = JSON.parse(fs.readFileSync("tasks.json", "utf8"));
+  data.push({ title: "buy milk", id: 1 });
+  await fs.writeFile("tasks.json", `${JSON.stringify(data)}\n`, (err, res) => {
+    if (err) {
+      console.log(err);
+      return;
+    }
+  });
+}
+
+addTask();
