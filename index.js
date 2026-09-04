@@ -59,6 +59,36 @@ async function DeleteTask(taskId) {
   );
 }
 
+async function markTask(id, status) {
+  let data = JSON.parse(fs.readFileSync("tasks.json", "utf8"));
+
+  if (status === "done") {
+    data.forEach((elem) => {
+      if (elem.id === id) {
+        elem.done = true;
+      }
+    });
+    await fs.writeFile("tasks.json", `${JSON.stringify(data)}`, (err, res) => {
+      if (err) {
+        console.log(err);
+        return;
+      }
+    });
+  } else if (status === "todo") {
+    data.forEach((elem) => {
+      if (elem.id === id) {
+        elem.done = false;
+      }
+    });
+    await fs.writeFile("tasks.json", `${JSON.stringify(data)}`, (err, res) => {
+      if (err) {
+        console.log(err);
+        return;
+      }
+    });
+  }
+}
+
 if (args[2] === "help") {
   console.log(`Usage: help: prints this message ,add "title": adds a task`);
 } else if (args[2] === "add") {
@@ -67,6 +97,8 @@ if (args[2] === "help") {
   ListTasks(args[3]);
 } else if (args[2] === "delete") {
   DeleteTask(Number.parseInt(args[3]));
+} else if (args[2] === "mark") {
+  markTask(parseInt(args[3]), args[4]);
 } else {
   console.log(
     `Usage: help: prints this message | add "title": adds a task | list "complete | incomplete": lists tasks | delete "id": deletes a task`,
